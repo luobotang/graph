@@ -1,0 +1,28 @@
+{
+  "name": "graph",
+  "version": "1.0.0",
+  "description": "图数据结构，算法",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luobotang/graph.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/luobotang/graph/issues"
+  },
+  "homepage": "https://github.com/luobotang/graph#readme"
+}
