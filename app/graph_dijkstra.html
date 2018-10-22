@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Dijkstra 算法</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css">
+  <link rel="stylesheet" href="graph_dijkstra.css">
+</head>
+<body>
+  <div id="root" v-cloak class="app">
+    <button @click="createGraph">生成图</button>
+    <button @click="dijkstra('auto')" :disabled="searching">自动执行</button>
+    <button @click="searching ? next() : dijkstra('manul')">手动执行 - {{ searching ? '下一步' : '开始'}}</button>
+    <textarea class="graph_define" v-model="graph_define"></textarea>
+    <div class="graph-container">
+      <div ref="canvas" class="graph-container__canvas"></div>
+      <div class="graph-container__table">
+        <div v-if="graph" class="graph-table">
+          <div v-for="v in graph.v_list" class="graph-vertice">
+            <span class="graph-vertice__id">{{v}}</span>
+            <span class="graph-vertice__distance" v-if="search">{{ v | distance(search) }}</span>
+            <span class="graph-vertice__path" v-if="search">{{ v | path(search) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="graph_dijkstra.bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+<script>
+app.vm = new Vue({
+  el: '#root',
+  data: {
+    graph: null,
+    graph_define: `# v_1 v_2 weight
+A B 2
+A C 4
+B C 2
+B D 4
+B C 2
+B E 2
+C E 3
+D F 2
+E D 3
+E F 2
+`,
+    search: null,
+    searching: false
+  },
+  mounted() {
+    this.createGraph()
+  },
+  methods: {
+    createGraph() {
+      const {v_list, v_map} = this.graph = app.Graph.create(this.graph_define)
+
+      // 绘制节点
+      const nodes = this.networkNodes = []
+      v_list.forEach((v) => {
+        nodes.push({
+          id: v,
+          label: v
+        })
+      })
+
+      const edges = this.networkEdges = []
+      v_list.forEach((v_1) => {
+        v_list.forEach((v_2) => {
+          const weight = v_map[v_1][v_2]
+          if (weight) {
+            edges.push({
+              id: v_1 + '_' + v_2,
+              from: v_1,
+              to: v_2,
+              label: '' + weight
+            })
+          }
+        })
+      })
+
+      const options = this.networkOptions = {
+        layout: {
+          randomSeed: 4 // 固定seed，确保相同数据每次绘制结果不变，选择4时缺省数据显示效果较好
+        },
+        nodes: {
+          font: {
+            color: '#333333',
+            bold: {
+              color: '#ff3333'
+            }
+          },
+          color: {
+            border: '#333333',
+            background: '#f0f0f0',
+            highlight: {
+              border: '#ff3333',
+              background: '#fff0f0'
+            }
+          }
+        },
+        edges: {
+          arrows: {
+            to: true
+          },
+          color: {
+            color: '#dddddd',
+            highlight: '#ffcccc'
+          }
+        }
+      }
+
+      this.network = new vis.Network(this.$refs.canvas, {
+        nodes: new vis.DataSet(nodes),
+        edges: new vis.DataSet(edges)
+      }, options)
+    },
+    dijkstra(type) {
+      if (this.searching) return
+
+      this.searching = true
+      this.resetSearch()
+
+      app.dijkstra(this.graph, this.graph.v_list[0], (search, next) => {
+        const {done, distance, visited, paths, current} = search
+
+        if (done) {
+          this.searching = false
+          this.endSearch()
+          return
+        }
+
+        this.renderSearch(search)
+
+        if (type === 'auto') {
+          setTimeout(next, 1000)
+        } else {
+          this.next = next
+        }
+      })
+    },
+    resetSearch() {
+      this.search = null
+    },
+    renderSearch(search) {
+      const {current} = this.search = search
+      if (!current) return
+      if (search.target) {
+        this.network.selectEdges([current + '_' + search.target])
+        this.network.setSelection({
+          nodes: [current, search.target],
+          edges: [current + '_' + search.target]
+        }, {highlightEdges: false})
+      } else {
+        this.network.setSelection({
+          nodes: [current]
+        }, {highlightEdges: false})
+      }
+    },
+    endSearch() {
+      this.network.setSelection({nodes: []}, {highlightEdges: false})
+    }
+  },
+  filters: {
+    distance(v, search) {
+      const {distance} = search
+      const d = distance[v]
+      return d < Number.MAX_SAFE_INTEGER ? d : '-'
+    },
+    path(v, search) {
+      const {paths} = search
+      const p = paths[v]
+      return p.join(' -> ')
+    }
+  }
+})
+</script>
+</body>
+</html>

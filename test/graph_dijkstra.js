@@ -22,7 +22,7 @@ describe('dijkstra', () => {
 
     dijkstra(graph, 'a', ({distance, visited, paths, current, done}, next) => {
       if (done) {
-        console.log(graph.v_list.map(v => `${v} - ${distance[v]} : ${paths[v]}`).join('\n'))
+        console.log(graph.v_list.map(v => `${v} - ${distance[v]} : ${paths[v].join('->')}`).join('\n'))
         finished()
         return
       }

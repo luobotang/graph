@@ -9,10 +9,13 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "rollup": "^0.66.6",
+    "rollup-plugin-commonjs": "^9.2.0"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build:app": "node build/build_app"
   },
   "repository": {
     "type": "git",
