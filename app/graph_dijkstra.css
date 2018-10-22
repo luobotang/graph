@@ -45,6 +45,7 @@ body {
 
 .graph-vertice {
   padding: 5px 10px;
+  font-family: monospace;
 }
 .graph-vertice:nth-child(even) {
   background: #fafafa;
@@ -52,15 +53,21 @@ body {
 .graph-vertice__id {
   display: inline-block;
   padding: 0 5px;
-  font-family: monospace;
   border: 1px solid #e5e5e5;
   border-radius: 5px;
 }
+.graph-vertice__visited {
+  display: inline-block;
+  width: 1em;
+  font-weight: bold;
+  text-align: center;
+  color: #666;
+}
 .graph-vertice__distance {
-  padding: 0 10px;
-  color: #333;
+  font-weight: bold;
+  color: #f33;
 }
 .graph-vertice__path {
-  font-family: monospace;
+  padding-left: 10px;
   color: #888;
 }

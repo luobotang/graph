@@ -20,6 +20,7 @@
         <div v-if="graph" class="graph-table">
           <div v-for="v in graph.v_list" class="graph-vertice">
             <span class="graph-vertice__id">{{v}}</span>
+            <span class="graph-vertice__visited">{{ v | visited(search) }}</span>
             <span class="graph-vertice__distance" v-if="search">{{ v | distance(search) }}</span>
             <span class="graph-vertice__path" v-if="search">{{ v | path(search) }}</span>
           </div>
@@ -41,8 +42,8 @@ A C 4
 B C 2
 B D 4
 B C 2
-B E 2
-C E 3
+B E 4
+C E 1
 D F 2
 E D 3
 E F 2
@@ -164,6 +165,11 @@ E F 2
     }
   },
   filters: {
+    visited(v, search) {
+      if (!search) return ' '
+      if (search.visited[v]) return '*'
+      return ' '
+    },
     distance(v, search) {
       const {distance} = search
       const d = distance[v]
