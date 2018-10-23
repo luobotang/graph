@@ -149,7 +149,6 @@ E F 2
       const {current} = this.search = search
       if (!current) return
       if (search.target) {
-        this.network.selectEdges([current + '_' + search.target])
         this.network.setSelection({
           nodes: [current, search.target],
           edges: [current + '_' + search.target]
